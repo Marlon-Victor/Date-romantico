@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Uma noite divertida</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="convite" class="container active">
+    <h1>Quer sair comigo? 💕</h1>
+    <img src="fofo.png" alt="Imagem fofa" class="imagem grande">
+    <div class="botoes">
+      <button id="sim" class="btn">Sim, aceito</button>
+      <button id="nao" class="btn">Não</button>
+    </div>
+  </div>
+
+  <div id="opcoes" class="container">
+    <h2>Escolha o que vamos fazer 💖</h2>
+    <div class="bloco-opcoes">
+      <div class="grid">
+        <div class="card" data-opcao="Pizza"><p>Pizza 🍕</p></div>
+        <div class="card" data-opcao="Sushi"><p>Sushi 🍣</p></div>
+        <div class="card" data-opcao="Cinema"><p>Cinema 🎬</p></div>
+        <div class="card" data-opcao="Sorvete"><p>Sorvete 🍨</p></div>
+        <div class="card" data-opcao="Hamburguer"><p>Hambúrguer 🍔</p></div>
+        <div class="card" data-opcao="Parque"><p>Parque 🌳</p></div>
+        <div class="card" data-opcao="Serie"><p>Ver Série em Casa 📺</p></div>
+        <div class="card" data-opcao="Boliche"><p>Boliche 🎳</p></div>
+        <div class="card" data-opcao="Praia"><p>Praia 🏖️</p></div>
+      </div>
+      <button id="confirmarOpcao" class="btn confirmar">Confirmar escolha</button>
+    </div>
+  </div>
+
+  <div id="formulario" class="container">
+    <h2>Preencha os detalhes do date 💖</h2>
+    <img src="meme.png" alt="Meme engraçado" class="imagem pequena">
+    <form id="agendaForm">
+      <input type="text" id="titulo" placeholder="Título do Evento" required><br>
+      <input type="text" id="local" placeholder="Local" required><br>
+      <input type="datetime-local" id="inicio" required><br>
+      <button type="submit">Adicionar ao Google Agenda</button>
+    </form>
+  </div>
+
+  <div id="final" class="container">
+    <img src="gatos.png" alt="Casal de gatos apaixonados" class="imagem">
+    <h2>Te vejo lá Dona Encrenca 💖</h2>
+  </div>
+
+  <script>
+    const naoBtn = document.getElementById("nao")
+    const simBtn = document.getElementById("sim")
+    const convite = document.getElementById("convite")
+    const opcoes = document.getElementById("opcoes")
+    const formulario = document.getElementById("formulario")
+    const final = document.getElementById("final")
+    const cards = document.querySelectorAll(".card")
+    const confirmarOpcao = document.getElementById("confirmarOpcao")
+    let escolha = null
+
+    naoBtn.addEventListener("mouseover", () => {
+      const x = Math.random() * (window.innerWidth - naoBtn.offsetWidth)
+      const y = Math.random() * (window.innerHeight - naoBtn.offsetHeight)
+      naoBtn.style.transition = "all 0.8s ease"
+      naoBtn.style.position = "absolute"
+      naoBtn.style.left = x + "px"
+      naoBtn.style.top = y + "px"
+    })
+
+    simBtn.addEventListener("click", () => {
+      convite.classList.remove("active")
+      opcoes.classList.add("active")
+      document.querySelectorAll(".card").forEach((card, i) => {
+        card.style.animation = `zoomIn 0.5s ease ${i * 0.1}s forwards`
+      })
+    })
+
+    cards.forEach(card => {
+      card.addEventListener("click", () => {
+        cards.forEach(c => c.classList.remove("selecionado"))
+        card.classList.add("selecionado")
+        escolha = card.dataset.opcao
+      })
+    })
+
+    confirmarOpcao.addEventListener("click", () => {
+      if (!escolha) {
+        alert("Escolha uma opção primeiro!")
+        return
+      }
+      opcoes.classList.remove("active")
+      formulario.classList.add("active")
+    })
+
+    document.getElementById("agendaForm").addEventListener("submit", function(e){
+      e.preventDefault()
+      formulario.classList.remove("active")
+      final.classList.add("active")
+
+      const titulo = document.getElementById("titulo").value
+      const local = document.getElementById("local").value
+      const inicioRaw = document.getElementById("inicio").value // formato: 2026-10-07T20:30
+      const inicioDate = new Date(inicioRaw)
+
+      // formato correto: YYYYMMDDTHHMMSS
+      const pad = n => n.toString().padStart(2, "0")
+      const inicio = `${inicioDate.getFullYear()}${pad(inicioDate.getMonth()+1)}${pad(inicioDate.getDate())}T${pad(inicioDate.getHours())}${pad(inicioDate.getMinutes())}00`
+
+      const fimDate = new Date(inicioDate.getTime() + 2*60*60*1000) // +2h
+      const fim = `${fimDate.getFullYear()}${pad(fimDate.getMonth()+1)}${pad(fimDate.getDate())}T${pad(fimDate.getHours())}${pad(fimDate.getMinutes())}00`
+
+      const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&location=${encodeURIComponent(local)}&dates=${inicio}/${fim}`
+      window.open(url, "_blank")
+    })
+
+    function createHeart() {
+      const heart = document.createElement("div")
+      heart.classList.add("heart")
+      heart.innerHTML = "❤"
+      heart.style.left = Math.random() * window.innerWidth + "px"
+      heart.style.top = window.innerHeight + "px"
+      document.body.appendChild(heart)
+      setTimeout(() => heart.remove(), 6000)
+    }
+    setInterval(createHeart, 500)
+  </script>
+</body>
+</html>
